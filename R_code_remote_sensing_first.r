@@ -80,14 +80,7 @@ clnir <- colorRampPalette(c("red","orange","yellow")) (100)
 plot(p224r63_2011$B4_sre, col=clnir)
 
 ### Day 4 ###
-# standard generic for plot RGB 
-library(raster)
-
-setwd("~/lab/") # Linux
-setwd("/Users/name/Desktop/lab/") # Mac
-setwd("C:/lab/") # Windows
-
-p224r63_2011 <- brick("p224r63_2011_masked.grd")
+# Visualizing data by RGB plotting 
 
 #Landsat bands
 # B1: blue
