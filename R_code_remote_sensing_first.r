@@ -26,10 +26,10 @@ plot(p224r63_2011, col=cls)
 # B1: blue
 # B2: green
 # B3: red
-# B4: NIR
-# B5: MIR
-# B6: TIR
-# B7: MIR
+# B4: NIR - infrarosso vicino
+# B5: MIR - infrarosso medio
+# B6: TIR - infrarosso termico
+# B7: MIR - infrarosso medio
 
 # dev.off will clean the current graph
 dev.off()
@@ -37,7 +37,6 @@ dev.off()
 plot(p224r63_2011$B1_sre)
 
 # plot band 1 with a predefined color ramp palette
-
 cls <- colorRampPalette(c("red","pink","orange","purple")) (200)
 plot(p224r63_2011$B1_sre, col=cl)
 
@@ -79,3 +78,56 @@ plot(p224r63_2011$B3_sre, col=clr)
 
 clnir <- colorRampPalette(c("red","orange","yellow")) (100)
 plot(p224r63_2011$B4_sre, col=clnir)
+
+### Day 4 ###
+# standard generic for plot RGB 
+library(raster)
+
+setwd("~/lab/") # Linux
+setwd("/Users/name/Desktop/lab/") # Mac
+setwd("C:/lab/") # Windows
+
+p224r63_2011 <- brick("p224r63_2011_masked.grd")
+
+#Landsat bands
+# B1: blue
+# B2: green
+# B3: red
+# B4: NIR - infrarosso vicino
+# B5: MIR - infrarosso medio
+# B6: TIR - infrarosso termico
+# B7: MIR - infrarosso medio
+
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")  # natural colours
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")  
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")  # false colours
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+
+# Exercise: mount a 2x2 multiframe
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") 
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+
+# il mio primo pdf
+pdf("il_mio_primo_pdf.pdf") 
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")  
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin")
+dev.off()
+
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist")
+
+# par natural colours, false colours, and false colours with histogram stretch
+par(mfrow=c(3,1))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin")
+
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="lin")
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist")
+
+install.packages("RStoolbox")
+library(RStoolbox)
