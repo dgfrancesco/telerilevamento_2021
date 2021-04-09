@@ -4,8 +4,8 @@
 library(raster)
 
 setwd("~/lab/") # Linux
-setwd("/Users/name/Desktop/lab/") # Mac
-setwd("C:/lab/") # Windows
+#setwd("/Users/name/Desktop/lab/") # Mac
+#setwd("C:/lab/") # Windows
 
 p224r63_2011 <- brick("p224r63_2011_masked.grd")
 p224r63_2011
@@ -125,7 +125,7 @@ plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist")
 install.packages("RStoolbox")
 library(RStoolbox)
 
-###### Day 4 #############
+###### Day 5 #############
 # Multitemporal set
 p224r63_1988 <- brick("p224r63_1988_masked.grd")
 p224r63_1988
