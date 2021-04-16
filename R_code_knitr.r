@@ -6,4 +6,5 @@ setwd("~/lab/greenland") # Linux
 
 library(knitr)  # oppure require("knitr")
 
-stitch("~/Downloads/R_code_temp.r", template=system.file("misc", "knitr-template.Rnw", package="knitr"))
+#stitch("~/Downloads/R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", package="knitr"))
+stitch("C:/lab/R_code_greenland.r.txt", template=system.file("misc", "knitr-template.Rnw", package="knitr"))
