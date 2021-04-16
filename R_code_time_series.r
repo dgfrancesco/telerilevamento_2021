@@ -3,6 +3,8 @@
 # Data and code from Emanuela Cosma
 
 # install.packages("raster")
+ install.packages("rasterVis")
+
 library(raster)
 library(ratserVis)
 ###install.packages("rgdal") se manca un pezzo di computer
