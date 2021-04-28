@@ -45,4 +45,5 @@ summary(p224r63_2011m_pca$model) #vediamo quanta varianza spiegano le varie comp
 plot(p224r63_2011m_pca$map)
 plotRGB(p224r63_2011m_pca$map, r=1, g=2, b=3, stretch="lin")
 #plot(p224r63_2011m_pca$map$PC1, p224r63_2011m_pca$map$PC2)
+
 #str(p224r63_2011res_pca) da info sulla struttura informatica del file
