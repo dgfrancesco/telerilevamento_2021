@@ -39,7 +39,7 @@ ndvimean5 <- focal(ndvi, w=matrix(1/25, nrow=5, ncol=5), fun=mean)
 clsd <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red','yellow'))(100) #
 plot(ndvimean5, col=clsd)
 
-# PCA
+# PCA # calcolo della variabilità all'interno di un'analisi multivariata
 sentpca <- rasterPCA(sent)
 plot(sentpca$map)
 sentpca
