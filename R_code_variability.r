@@ -2,6 +2,10 @@
 
 library(raster)
 library(RStoolbox)
+library(ggplot2) # for ggplot plotting
+library(gridExtra) # for plotting ggplot together
+# install.packages("viridis")
+library(viridis) # for ggplot colouring  
 
 setwd("~/lab/") # Linux
 # setwd("C:/lab/") # Windows
@@ -46,3 +50,44 @@ sentpca
 
 summary(sentpca$model)
 # the first PC contains 67.36804% of the original information
+pc1 <- sentpca$map$PC1
+
+pc1devst3 <- focal(pc1, w=matrix(1/9, nrow=3, ncol=3), fun=sd)
+cl <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red','yellow'))(100) # 
+plot(pc1devst3, col=cl)
+
+pc1 <- sentpca$map$PC1
+pc1sd5 <- focal(pc1, w=matrix(1/25, nrow=5, ncol=5), fun=sd)
+cl <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red','yellow'))(100) # 
+plot(pc1sd5, col=cl)
+
+# with the source function you can upload code from outside! 
+source("source_test_lezione.r") # mettiamo dentro un codice senza doverlo scrivere
+source("source_ggplot.r")
+
+# https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html
+ggplot() + geom_raster(pc1sd5, mapping= aes(x=x, y=y, fill=layer)) + scale_fill_viridis()
+
+p1 <- ggplot() +
+geom_raster(pc1sd5, mapping = aes(x = x, y = y, fill = layer)) +
+scale_fill_viridis()  +
+ggtitle("Standard deviation of PC1 by viridis colour scale")
+
+p2<- ggplot() +
+geom_raster(pc1sd5, mapping = aes(x = x, y = y, fill = layer)) +
+scale_fill_viridis(option="magma")  +
+ggtitle("Standard deviation of PC1 by magma colour scale")
+
+p3 <- ggplot() +
+geom_raster(pc1sd5, mapping = aes(x = x, y = y, fill = layer)) +
+scale_fill_viridis(option="turbo")  +
+ggtitle("Standard deviation of PC1 by turbo colour scale")
+
+p4 <- ggplot() +
+geom_raster(pc1sd5, mapping = aes(x = x, y = y, fill = layer)) +
+scale_fill_viridis(option="inferno")  +
+ggtitle("Standard deviation of PC1 by inferno colour scale")
+
+grid.arrange(p1,p2,p3, nrow=1)
+
+
