@@ -1,5 +1,7 @@
 # R code complete - Telerilevamento Geo-Ecologico
 
+#------------------------------------------------------------------------------------------
+
 # Summary:
 
 # 1. Remote sensing first code
@@ -12,6 +14,7 @@
 # 8. R code vegetation indeces
 # 9. R code land cover
 # 10. R code variability
+# 11. R code spectral signature
 
 #------------------------------------------------------------------------------------------------------
 
@@ -26,6 +29,7 @@ setwd("~/lab/") # Linux
 
 p224r63_2011 <- brick("p224r63_2011_masked.grd")
 p224r63_2011
+
 plot(p224r63_2011)
 
 ### Day 2 ###
@@ -56,6 +60,11 @@ plot(p224r63_2011$B1_sre)
 # plot band 1 with a predefined color ramp palette
 cls <- colorRampPalette(c("red","pink","orange","purple")) (200)
 plot(p224r63_2011$B1_sre, col=cl)
+
+dev.off()
+
+plot(p224r63_2011$B1_sre)
+plot(p224r63_2011$B2_sre)
 
 # 1 row, 2 columns
 par(mfrow=c(1,2))
@@ -169,10 +178,6 @@ plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist")
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist")
 dev.off()
 
-
-
-
-
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin")
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist")
 
@@ -229,14 +234,17 @@ import
 
 # stack        #crea un blocco di file raster tutti insieme invece che lasciarli singoli, plot unico invece di fare par(mfrow)
 TGr <- stack(import)
+TGr
 plot(TGr)
-plotRGB(TGr, 1,2,3, stretch="lin")
-plotRGB(TGr, 2,3,4, stretch="lin")
+
+plotRGB(TGr, 1, 2, 3, stretch="lin")
+plotRGB(TGr, 2, 3, 4, stretch="lin")
+plotRGB(TGr, 4, 3, 2, stretch="Lin") 
 
 ### day 7 ###
 
 levelplot(TGr)
-levelplot(TGr$lst_2000)
+#levelplot(TGr$lst_2000)
 
 cl <- colorRampPalette(c("blue","light blue","pink","red"))(100)
 levelplot(TGr, col.regions=cl)
@@ -254,6 +262,7 @@ melt
 levelplot(melt)
 
 melt_amount <- melt$X2007annual_melt - melt$X1979annual_melt
+
 clb <- colorRampPalette(c("blue","white","red"))(100)
 plot(melt_amount, col=clb)
 
@@ -272,14 +281,14 @@ library(ncdf4)
 
 setwd("C:/lab/")
 
-FCOVER <- raster("c_gls_FCOVER_202006130000_GLOBE_PROBAV_V1.5.1.nc")
-FCOVER
+albedo <- raster("c_gls_FCOVER_202006130000_GLOBE_PROBAV_V1.5.1.nc")
+albedo
 cl <- colorRampPalette(c('light blue','green','red','yellow'))(100)
-plot(FCOVER, col=cl, main="FCOVER")
+plot(albedo, col=cl, main="albedo")
 
 #resampling
-fcoverres <- aggregate(FCOVER, fact=100) #ricampionamento bilineare
-plot(fcoverres, col=c, main="fcoverres")
+albedores <- aggregate(albedo, fact=100) #ricampionamento bilineare
+plot(albedores, col=c, main="albedores")
 
 #-------------------------------------------------------------------------------------------
 
@@ -333,6 +342,7 @@ plot(p224r63_2011)
 
 plot(p224r63_2011$B1_sre, p224r63_2011$B2_sre, col="red", pch=19, cex=2) # plottiamo i valori della banda 1 con quelli della banda 2, 
 # pch è il point character, cex aumento il carattere
+plot(p224r63_2011$B2_sre, p224r63_2011$B1_sre, col="red", pch=19, cex=2)
 
 pairs(p224r63_2011) # correlazione a 2 a 2 tra tutte le bande. Indice di correlazione di Pearson tra -1 e 1, 
 # positivemente correlati valori del coefficiente di Pearson vicino a 1, negativamente correlati più vicino a zero.
@@ -354,6 +364,7 @@ plot(p224r63_2011m_pca$map)
 plotRGB(p224r63_2011m_pca$map, r=1, g=2, b=3, stretch="lin")
 #plot(p224r63_2011m_pca$map$PC1, p224r63_2011m_pca$map$PC2)
 
+# add from students:
 #str(p224r63_2011res_pca) da info sulla struttura informatica del file
 
 #-------------------------------------------------------------------------------------------
@@ -385,7 +396,9 @@ plot(soc$map,col=cl)
 
 # Unsupervised Classification with 20 classes
 soe <- unsuperClass(so, nClasses=20)
-plot(soe$map)
+
+cl <- colorRampPalette(c('yellow','black','red'))(100)
+plot(soe$map,col=cl)
 
 #Download an image from: https://www.esa.int/ESA_Multimedia/Missions/Solar_Orbiter/(result_type)/images
 sun <- brick("Sun.png") 
@@ -447,10 +460,10 @@ grid.arrange(p1, p2, nrow = 2) # this needs gridExtra
 # install.packages("rasterdiv")
 # install.packages("rasterVis")
 
-library(raster) # oppure funzione require
-library(RStoolbox) # for vegetation indices
+library(raster) # oppure funzione require(raster)
+library(RStoolbox) # for vegetation indices calculation
 library(rasterVis)
-library(rasterdiv)
+library(rasterdiv) # for the worldwide NDVI
 
 setwd("~/lab/") # Linux
 # setwd("C:/lab/") # Windows
@@ -467,8 +480,14 @@ plotRGB(defor2, r=1, g=2, b=3, stretch="lin")
 
 ### DVI1 ###
 defor1
+
 # band1: NIR, defor1.1
 # band2: red, defor1.2
+
+# difference vegetation index
+
+# time 1
+
 dvi1 <- defor1$defor1.1 - defor1$defor1.2
 plot(dvi1)
 cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100) # specifying a color scheme
@@ -498,8 +517,14 @@ plot(difdvi, col=cld)
 ndvi1 <- (defor1$defor1.1-defor1$defor1.2) / (defor1$defor1.1+defor1$defor1.2) 
 plot(ndvi1, col=cl)
 
+# ndvi1 <- dvi1 / (defor1$defor1.1 + defor1$defor1.2)
+# plot(ndvi1, col=cl)
+
 ndvi2 <- (defor2$defor2.1-defor2$defor2.2) / (defor2$defor2.1+defor2$defor2.2) 
 plot(ndvi2, col=cl)
+
+# ndvi1 <- dvi2 / (defor2$defor2.1 + defor1$defor2.2)
+# plot(ndvi2, col=cl)
 
 difndvi <- ndvi1 - ndvi2
  
@@ -513,6 +538,17 @@ plot(vi, col=cl)
 
 vi2 <- spectralIndices(defor2, green=3, red= 2, nir=1)
 plot(vi2, col=cl)
+
+# worldwide NDVI
+plot(copNDVI)
+
+
+# Pixels with values 253, 254 and 255 (water) will be set as NA’s.
+copNDVI <- reclassify(copNDVI, cbind(253:255, NA))
+plot(copNDVI)
+
+# rasterVis package needed:
+levelplot(copNDVI)
 
 #-------------------------------------------------------------------------------------------
 
@@ -553,12 +589,13 @@ grid.arrange(p1, p2, nrow=2)
 # unsupervised classification 
 d1c <- unsuperClass(defor1, nClasses=2) # 
 plot(d1c$map)
-
 #class 1: forest
 #class 2: agriculture
 
 #set.seed() would allow to attain the same results
 d2c <- unsuperClass(defor2, nClasses=2)
+# class 1: agriculture
+# class 2: forest
 
 d2c3 <- unsuperClass(defor2, nClasses=3)
 plot(d2c3$map)
@@ -603,6 +640,8 @@ percentages <- data.frame(cover, percent_1992, percent_2006)
 percentages
 
 #ggplot2 creato per fare dei bei grafici in statistica ( ggplot sarebbe come una specie di par.mfrowcon il + aggiungiamo il grafico)
+ggplot(percentages, aes(x=cover, y=percent_1992, color=cover)) + geom_bar(stat="identity", fill="white")
+ggplot(percentages, aes(x=cover, y=percent_2006, color=cover)) + geom_bar(stat="identity", fill="white")
 
 p1 <- ggplot(percentages, aes(x=cover, y=percent_1992, color=cover)) + geom_bar(stat="identity", fill="white") 
 # geom_bar genera per generare un grafico a barre, identity serve per dire quali dati usiamo, usiamo i dati del dataframe, fill per dare il colore
@@ -637,6 +676,7 @@ plotRGB(sent, stretch="lin")
 
 nir <- sent$sentinel.1
 red <- sent$sentinel.2
+
 ndvi <- (nir-red) / (nir+red)
 plot(ndvi)
 cl <- colorRampPalette(c('black','white','red','magenta','green'))(100) # 
@@ -655,6 +695,10 @@ clsd <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red
 plot(ndvimean3, col=clsd)
 
 # changing window size
+ndvisd13 <- focal(ndvi, w=matrix(1/169, nrow=13, ncol=13), fun=sd)
+clsd <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red','yellow'))(100) # 
+plot(ndvisd13, col=clsd)
+
 ndvimean5 <- focal(ndvi, w=matrix(1/25, nrow=5, ncol=5), fun=mean)
 clsd <- colorRampPalette(c('blue','green','pink','magenta','orange','brown','red','yellow'))(100) #
 plot(ndvimean5, col=clsd)
@@ -707,3 +751,130 @@ ggtitle("Standard deviation of PC1 by inferno colour scale")
 grid.arrange(p1,p2,p3, nrow=1)
 
 #-------------------------------------------------------------------------------------------
+
+# 11. R code spectral signatures
+
+# R_code_spectral_signatures.r
+
+library(raster)
+library(rgdal)
+library(ggplot2)
+
+setwd("~/lab/")
+# setwd("/Users/utente/lab") #mac
+# setwd("C:/lab/") # windows
+
+defor2 <- brick("defor2.jpg")
+
+# defor2.1, defor2.2, defor2.3 
+# NIR, red, green
+
+plotRGB(defor2, r=1, g=2, b=3, stretch="lin")
+plotRGB(defor2, r=1, g=2, b=3, stretch="hist")
+
+click(defor2, id=T, xy=T, cell=T, type="p", pch=16, cex=4, col="yellow")
+
+# results:
+#      x     y  cell defor2.1 defor2.2 defor2.3
+# 1 178.5 435.5 30293      206        6       19
+#      x     y   cell defor2.1 defor2.2 defor2.3
+# 1 571.5 245.5 166916       40       99      139
+
+# define the columns of the dataset:
+band <- c(1,2,3)
+forest <- c(206,6,19)
+water <- c(40,99,139)
+
+# create the dataframe
+spectrals <- data.frame(band, forest, water)
+
+# plot the sepctral signatures
+ggplot(spectrals, aes(x=band)) +
+ geom_line(aes(y=forest), color="green") +
+ geom_line(aes(y=water), color="blue") +
+ labs(x="band",y="reflectance")
+
+############### Multitemporal
+
+defor1 <- brick("defor1.jpg")
+
+plotRGB(defor1, r=1, g=2, b=3, stretch="lin")
+
+# spectral signatures defor1
+click(defor1, id=T, xy=T, cell=T, type="p", pch=16, col="yellow")
+
+#     x     y  cell defor1.1 defor1.2 defor1.3
+# 1 89.5 339.5 98622      223       11       33
+#     x     y   cell defor1.1 defor1.2 defor1.3
+# 1 42.5 336.5 100717      218       16       38
+#     x     y  cell defor1.1 defor1.2 defor1.3
+# 1 64.5 341.5 97169      213       36       46
+#      x     y   cell defor1.1 defor1.2 defor1.3
+# 1 80.5 326.5 107895      208        2       22
+#     x     y  cell defor1.1 defor1.2 defor1.3
+# 1 76.5 374.5 73619      224       21       41
+
+# time t2
+plotRGB(defor2, r=1, g=2, b=3, stretch="lin")
+click(defor2, id=T, xy=T, cell=T, type="p", pch=16, col="yellow")
+
+#      x     y  cell defor2.1 defor2.2 defor2.3
+# 1 86.5 339.5 99033      197      163      151
+#      x     y  cell defor2.1 defor2.2 defor2.3
+# 1 104.5 338.5 99768      149      157      133
+#      x     y  cell defor2.1 defor2.2 defor2.3
+# 1 110.5 354.5 88302      197      132      128
+#     x     y   cell defor2.1 defor2.2 defor2.3
+# 1 90.5 320.5 112660      169      166      149
+#    x     y   cell defor2.1 defor2.2 defor2.3
+# 1 97.5 309.5 120554      150      137      129
+
+# define the columns of the dataset:
+band <- c(1,2,3)
+time1 <- c(223,11,33)
+time1p2 <- c(218,16,38)
+time2 <- c(197,163,151)
+time2p2 <- c(149,157,133)
+
+spectralst <- data.frame(band, time1, time2, time1p2, time2p2)
+
+
+# plot the sepctral signatures
+ggplot(spectralst, aes(x=band)) +
+ geom_line(aes(y=time1), color="red", linetype="dotted") +
+ geom_line(aes(y=time1p2), color="red", linetype="dotted") +
+ geom_line(aes(y=time2), linetype="dotted") +
+ geom_line(aes(y=time2p2), linetype="dotted") +
+ labs(x="band",y="reflectance")
+
+# image from Earth Observatory
+
+eo <- brick("june_puzzler.jpg")
+plotRGB(eo, 1,2,3, stretch="hist")
+click(eo, id=T, xy=T, cell=T, type="p", pch=16, cex=4, col="yellow")
+
+# output
+#     x     y  cell june_puzzler.1 june_puzzler.2 june_puzzler.3
+# 1 93.5 373.5 76414            187            163             11
+#      x     y   cell june_puzzler.1 june_puzzler.2 june_puzzler.3
+# 1 219.5 285.5 139900             11            140              0
+#     x     y   cell june_puzzler.1 june_puzzler.2 june_puzzler.3
+# 1 184.5 315.5 118265             41             40             20
+
+
+# define the columns of the dataset:
+band <- c(1,2,3)
+stratum1 <- c(187,163,11)
+stratum2 <- c(11,140,0)
+stratum3 <- c(41,40,20)
+
+spectralsg <- data.frame(band, stratum1, stratum2, stratum3)
+
+# plot the sepctral signatures
+ggplot(spectralsg, aes(x=band)) +
+ geom_line(aes(y=stratum1), color="yellow") +
+ geom_line(aes(y=stratum2), color="green") +
+ geom_line(aes(y=stratum3), color="blue") +
+ labs(x="band",y="reflectance")
+
+#-----------------------------------------------------------------------------
