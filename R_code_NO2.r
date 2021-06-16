@@ -1,4 +1,8 @@
-# NO2 
+# R_code_no2.r
+library(raster)
+library(RStoolbox) # here used for raster based multivariate analysis
+
+# 1. Set the working directory EN 
 
 setwd("~/lab/EN") # Linux
 # setwd("C:/lab/EN") # Windows
