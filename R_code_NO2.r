@@ -45,6 +45,7 @@ rlist <- list.files(pattern="EN")
 rlist
 
 import <- lapply(rlist,raster)
+import
 
 EN<- stack(import)
 plot(EN, col=cls)
